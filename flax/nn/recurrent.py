@@ -16,7 +16,7 @@
 
 """Recurrent neural network modules.
 
-THe RNNCell modules are designed to fit in with the scan function in JAX::
+THe RNNCell modules are designed to fit in with the scan function in Jax::
 
   model = LSTMCell.create(rng_1, time_series[0])
   carry = LSTMCell.initialize_carry(rng_2, (batch_size,), memory_size)
@@ -96,10 +96,10 @@ class LSTMCell(RNNCellBase):
     hidden_features = h.shape[-1]
     # input and recurrent layers are summed so only one needs a bias.
     dense_h = linear.Dense.partial(
-        inputs=h, features=hidden_features, bias=True,
+        inputs=h, features=hidden_features, bias=False,
         kernel_init=recurrent_kernel_init, bias_init=bias_init)
     dense_i = linear.Dense.partial(
-        inputs=inputs, features=hidden_features, bias=False,
+        inputs=inputs, features=hidden_features, bias=True,
         kernel_init=kernel_init)
     i = gate_fn(dense_i(name='ii') + dense_h(name='hi'))
     f = gate_fn(dense_i(name='if') + dense_h(name='hf'))

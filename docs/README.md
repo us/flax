@@ -1,8 +1,3 @@
-# Where to find the docs
-
-The FLAX documentation can be found here:
-https://flax.readthedocs.io/en/latest/
-
 # How to build the docs
 
 1. Install the requirements in requirements.txt

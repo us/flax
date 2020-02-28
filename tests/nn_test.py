@@ -154,38 +154,6 @@ class ModuleTest(absltest.TestCase):
     with self.assertRaises(ValueError):
       FaultyModule.create(random.PRNGKey(0), x)
 
-  def test_shared_module_called_in_other_frame(self):
-    """Test that shared modules only appear once in parameters.
-
-    Concretely, create a shared submodule, then pass it in to
-    a child module and apply it there. Test that the parameters
-    are only stored once, in the frame where the shared module
-    was created.
-    """
-
-    class SubModule(nn.Module):
-
-      def apply(self):
-        self.param('param', (), initializers.zeros)
-
-    class UseSharedModule(nn.Module):
-
-      def apply(self, submodule):
-        submodule()
-
-    class TopLevel(nn.Module):
-
-      def apply(self):
-        submodule = SubModule.shared(name='shared')
-        submodule()
-        UseSharedModule(submodule, name='use_shared')
-
-    _, params = TopLevel.init(random.PRNGKey(0))
-    self.assertEqual({
-        'shared': {'param': jnp.zeros(())},
-        'use_shared': {},
-    }, params)
-
   def test_module_decorator(self):
     @nn.module
     def MyModule(x):  # pylint: disable=invalid-name
@@ -526,14 +494,14 @@ class RecurrentTest(absltest.TestCase):
     onp.testing.assert_allclose(y, carry[1])
     param_shapes = jax.tree_map(onp.shape, lstm.params)
     self.assertEqual(param_shapes, {
-        'ii': {'kernel': (3, 4)},
-        'if': {'kernel': (3, 4)},
-        'ig': {'kernel': (3, 4)},
-        'io': {'kernel': (3, 4)},
-        'hi': {'kernel': (4, 4), 'bias': (4,)},
-        'hf': {'kernel': (4, 4), 'bias': (4,)},
-        'hg': {'kernel': (4, 4), 'bias': (4,)},
-        'ho': {'kernel': (4, 4), 'bias': (4,)},
+        'ii': {'kernel': (3, 4), 'bias': (4,)},
+        'if': {'kernel': (3, 4), 'bias': (4,)},
+        'ig': {'kernel': (3, 4), 'bias': (4,)},
+        'io': {'kernel': (3, 4), 'bias': (4,)},
+        'hi': {'kernel': (4, 4)},
+        'hf': {'kernel': (4, 4)},
+        'hg': {'kernel': (4, 4)},
+        'ho': {'kernel': (4, 4)},
     })
 
   def test_gru(self):
