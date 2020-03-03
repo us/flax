@@ -16,7 +16,7 @@
 
 """Recurrent neural network modules.
 
-THe RNNCell modules are designed to fit in with the scan function in JAX::
+THe RNNCell modules are designed to fit in with the scan function in Jax::
 
   model = LSTMCell.create(rng_1, time_series[0])
   carry = LSTMCell.initialize_carry(rng_2, (batch_size,), memory_size)
