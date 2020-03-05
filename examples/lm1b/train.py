@@ -306,6 +306,8 @@ def main(argv):
 
   # We init the first set of dropout PRNG keys, but update it afterwards inside
   # the main pmap'd training update for performance.
+  # every host should have seperate dropout rngs so we fold in the host_id
+  rng = random.fold_in(rng, jax.host_id())
   dropout_rngs = random.split(rng, jax.local_device_count())
 
   metrics_all = []
